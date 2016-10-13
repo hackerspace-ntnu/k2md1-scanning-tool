@@ -11,10 +11,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ScanTheThing
 TEMPLATE = app
 
+SOURCES += \
+        main.cpp\
+        scanthething.cpp \
+        depthscanner.cpp \
+        depthreconstruct.cpp \
+        depthorient.cpp
 
-SOURCES += main.cpp\
-        scanthething.cpp
-
-HEADERS  += scanthething.h
+HEADERS  += \
+        scanthething.h \
+        depthscanner.h \
+        depthreconstruct.h \
+        depthorient.h
 
 FORMS    += scanthething.ui
