@@ -23,9 +23,9 @@ class ForegroundInfo : public QObject
 
     int m_images;
     void* m_windowPtr = nullptr;
-    bool m_scanningTime = true;
-    bool m_endScan = true;
-    bool m_calibrated = true;
+    bool m_scanningTime = false;
+    bool m_endScan = false;
+    bool m_calibrated = false;
 
 public:
     ForegroundInfo(QObject* parent = NULL) : QObject(parent) {}

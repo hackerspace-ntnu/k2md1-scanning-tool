@@ -8,6 +8,7 @@ class DepthScanner;
 class DepthOrient;
 class DepthReconstruct;
 class QMessageBox;
+class QWindow;
 
 namespace Ui {
 class ScanTheThing;
@@ -34,6 +35,8 @@ public slots:
 
     void updateImageCount(int imgs);
 
+    void insertXWindow(QWindow* window);
+
 private slots:
     void on_progressBar_valueChanged(int value);
 
@@ -43,6 +46,9 @@ private slots:
     void on_reconButton_clicked();
 
 private:
+    QWindow* m_currentWindow;
+    QWidget* m_currentWindowContainer;
+
     QThreadPool m_threadPool;
 
     DepthScanner* m_scanner = nullptr;

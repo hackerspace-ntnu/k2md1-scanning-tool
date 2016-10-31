@@ -10,7 +10,7 @@ using namespace std;
 static int N_FRAMES = 50;
 #define USE_COLOR
 
-extern const char* POSE_FILE;
+extern const char* VIEW;
 
 struct Point {
     Color col;
@@ -77,7 +77,7 @@ int points_main(int argc, char**argv) {
     float rotmat[9];
     float px, py, pz;
 
-    FILE*fp = fopen(POSE_FILE, "r");
+    FILE*fp = fopen(VIEW, "r");
 
     float ifx = 1.f/Dpers;
     int points = 0;

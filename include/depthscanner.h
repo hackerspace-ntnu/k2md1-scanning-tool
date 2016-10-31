@@ -5,6 +5,7 @@
 #include <QRunnable>
 
 class ScanTheThing;
+class QWindow;
 
 class DepthScanner : public QObject, public QRunnable
 {
@@ -13,6 +14,7 @@ class DepthScanner : public QObject, public QRunnable
 public:
     enum ScannerState
     {
+        None,
         Calibrating,
         Calibrated,
         Scanning,
@@ -30,7 +32,7 @@ private:
     ScanTheThing* m_userInterface;
 
     /* Core functionality */
-    ScannerState m_state;
+    ScannerState m_state = None;
 
 public:
 
@@ -49,8 +51,9 @@ public:
 
 signals:
     void destinationPathChanged(QString destinationPath);
-
     void stateChanged(ScannerState state);
+
+    void sendXWindow(QWindow* window);
 
 public slots:
     void setDestinationPath(QString destinationPath)
@@ -65,6 +68,8 @@ public slots:
     void pushErrorMessage();
 
     void setState(ScannerState state);
+
+    void receiveXWindow(void* winPtr);
 };
 
 

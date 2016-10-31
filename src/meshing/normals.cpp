@@ -6,7 +6,7 @@ static int N_FRAMES = 350;
 #include "pointcloud/trackball.hpp"
 #include "meshing/octree.hpp"
 
-char* OUTPUT_PLY_FILE = "../recorded/out.ply";
+extern char* OUTPUT_PLY_FILE;
 
 //
 
@@ -14,7 +14,7 @@ using namespace std;
 
 #include "../recorder/dataio.hpp"
 
-const char* VIEW = "../recorded/views.txt";
+extern const char* VIEW;
 
 #define USE_COLOR 
 
@@ -82,6 +82,9 @@ int normals_main(int argc, char**argv) {
     float px, py, pz;
 
     FILE*fp = fopen(VIEW, "r");
+
+    if(!fp)
+        throw std::runtime_error("Failed to open matrix file");
 
     float ifx = 1.f/Dpers;
     int points = 0;

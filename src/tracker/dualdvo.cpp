@@ -4,13 +4,14 @@
 static int N_FRAMES = 900;
 static const int iterframes = 50;
 
-const char*IMAGE_PATH = "../recorded/";
-extern const char*POSE_FILE;
+extern const char* IMAGE_PATH;
+extern const char* VIEW;
+extern const char* ZBUF_SAVE_TEMP;
 
 float host_img[w*h];
 void loadZB(float*z, int sw, int sh, int num) {
     char name[100];
-    sprintf(name, "%s%03dzb%dx%d.ppm", IMAGE_PATH, num, sw, sh);
+    sprintf(name, ZBUF_SAVE_TEMP, IMAGE_PATH, num, sw, sh);
     FILE*fp = fopen(name, "r");
     if (!fp) {
         cout << "File not found: " << name << endl;
@@ -229,7 +230,7 @@ int dualdvo_main(int argc, char**argv) {
         fclose(tmp_fp);
         loading_finish(calcframes);
 
-        FILE*fp = fopen(POSE_FILE, "w");
+        FILE*fp = fopen(VIEW, "w");
         for (int i = 0; i < calcframes; i++) {
             se3 view = path[i]*-1;
             view.exp(transform, 0);

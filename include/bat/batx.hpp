@@ -33,6 +33,11 @@ public:
   unsigned int w, h;
   XImage * pixmapImage;
   MyScreen() {}
+  ~MyScreen()
+  {
+      XDestroyWindow(display, win);
+  }
+
   inline MyScreen(unsigned int, unsigned int);
   inline MyScreen(Display*, unsigned int, unsigned int);
   inline void update();

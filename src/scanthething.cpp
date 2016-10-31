@@ -2,6 +2,8 @@
 #include "ui_scanthething.h"
 
 #include <QMessageBox>
+#include <QDir>
+#include <QWindow>
 
 #include "depthscanner.h"
 #include "depthorient.h"
@@ -68,6 +70,13 @@ void ScanTheThing::updateImageCount(int imgs)
     ui->scanButton->setText(QString("Scanned images: %1").arg(imgs));
 }
 
+void ScanTheThing::insertXWindow(QWindow *window)
+{
+    window->setFlags(Qt::FramelessWindowHint);
+    ui->splitter->addWidget(m_currentWindowContainer = QWidget::createWindowContainer(window, this));
+    m_currentWindow = window;
+}
+
 void ScanTheThing::resetView()
 {
     ui->progressBar->setValue(0);
@@ -90,12 +99,22 @@ void ScanTheThing::on_calibrateButton_clicked()
 
         m_scanner = new DepthScanner(this);
 
+        m_scanner->setDestinationPath("recorded/");
+
+        /* Remove temporary scanned files */
+        QDir destDir(m_scanner->destinationPath());
+        destDir.rmdir(destDir.canonicalPath());
+        if(!destDir.mkdir(destDir.canonicalPath()))
+            qDebug("Failed to mkdir()");
+
         m_threadPool.start(m_scanner);
 
         ui->calibrateButton->setText("Stop calibration");
+        m_scanner->setState(DepthScanner::Calibrating);
     } else{
         ui->calibrateButton->setEnabled(false);
         m_scanner->setState(DepthScanner::Calibrated);
+        /* The above state change is propagated through m_scanner to acitvateScanning() */
     }
 }
 
@@ -108,17 +127,18 @@ void ScanTheThing::on_scanButton_clicked()
     {
         ui->scanButton->setEnabled(false);
         m_scanner->setState(DepthScanner::Scanned);
+        /* The above state change is propagated through m_scanner to activateReconstruction() */
     }
 }
 
 void ScanTheThing::on_reconButton_clicked()
 {
-    m_orient = new DepthOrient();
-    m_reconstruct = new DepthReconstruct();
+    if(m_scanner->state() == DepthScanner::Scanned)
+    {
+        m_reconstruct = new DepthReconstruct();
 
-    m_threadPool.start(m_orient);
-    m_threadPool.start(m_reconstruct);
+        m_reconstruct->setFinalPlyFile("finally.ply");
 
-    ui->calibrateButton->setEnabled(false);
-    ui->scanButton->setEnabled(false);
+        m_threadPool.start(m_reconstruct);
+    }
 }

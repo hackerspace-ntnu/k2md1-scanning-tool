@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <exception>
 
 extern const char* ZBUF_SAVE_TEMP;
 extern const char* CBUF_SAVE_TEMP;
@@ -39,7 +40,9 @@ static unsigned char writedata[960*540*3];
 static void saveIMG(Surface&I, int w, int h, int num) {
   char name[100];
   sprintf(name, CBUF_SAVE_TEMP, num, w, h);
-  FILE*fp = fopen(name, "w");
+  FILE*fp = fopen(name, "w+");
+  if(!fp)
+      throw std::exception();
   fprintf(fp, "P6\n%d %d\n255\n", w, h);
   
   int c = 0;
