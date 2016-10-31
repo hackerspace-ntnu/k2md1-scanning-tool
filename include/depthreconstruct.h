@@ -2,8 +2,9 @@
 #define DEPTHRECONSTRUCT_H
 
 #include <QObject>
+#include <QRunnable>
 
-class DepthReconstruct : public QObject
+class DepthReconstruct : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
@@ -12,6 +13,10 @@ public:
 signals:
 
 public slots:
+
+    // QRunnable interface
+public:
+    void run();
 };
 
 #endif // DEPTHRECONSTRUCT_H

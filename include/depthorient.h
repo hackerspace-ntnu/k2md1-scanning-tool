@@ -2,13 +2,17 @@
 #define DEPTHORIENT_H
 
 #include <QObject>
+#include <QRunnable>
 
-class DepthOrient : public QObject
+#include "orientation_info.h"
+
+class DepthOrient : public QObject, public QRunnable
 {
     Q_OBJECT
 
 public:
     explicit DepthOrient(QObject* parent = 0);
+    void run();
 
 signals:
     void finishedProcessing(int last);
