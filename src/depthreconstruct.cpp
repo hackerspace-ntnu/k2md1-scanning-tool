@@ -8,6 +8,9 @@
 #include "pointcloud.h"
 #include "tracker.h"
 
+extern const char* DVO_KERNEL;
+extern const char* DUALDVO_KERNEL;
+
 DepthReconstruct::DepthReconstruct(ScanTheThing* interface, QObject *parent) : QObject(parent)
 {
     m_userInterface = interface;
@@ -46,6 +49,17 @@ void DepthReconstruct::run()
 
     VIEW = ".views.txt";
     OUTPUT_PLY_FILE = ".intermediate.ply";
+
+    auto env = QProcessEnvironment::systemEnvironment();
+
+    QString dvo_cl = env.value("APPDIR") + "/" + QString(DVO_KERNEL);
+    QString dualdvo_cl = env.value("APPDIR") + "/" + QString(DUALDVO_KERNEL);
+
+    std::string dvo_cl_std = dvo_cl.toStdString();
+    std::string dualdvo_cl_std = dualdvo_cl.toStdString();
+
+    DVO_KERNEL = dvo_cl_std.c_str();
+    DUALDVO_KERNEL = dualdvo_cl_std.c_str();
 
     {
         dualdvo_main(2, app_args);
