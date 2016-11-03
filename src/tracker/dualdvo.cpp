@@ -1,5 +1,6 @@
-#include "tracker/dualdvo.hpp"
 #include "tracker/loading.hpp"
+
+#include "tracker/dualdvo.hpp"
 
 static int N_FRAMES = 900;
 static const int iterframes = 50;
@@ -11,7 +12,7 @@ extern const char* ZBUF_SAVE_TEMP;
 float host_img[w*h];
 void loadZB(float*z, int sw, int sh, int num) {
     char name[100];
-    sprintf(name, ZBUF_SAVE_TEMP, IMAGE_PATH, num, sw, sh);
+    sprintf(name, ZBUF_SAVE_TEMP, num, sw, sh);
     FILE*fp = fopen(name, "r");
     if (!fp) {
         cout << "File not found: " << name << endl;

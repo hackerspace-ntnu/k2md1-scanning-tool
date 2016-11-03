@@ -1,6 +1,9 @@
 #include <vector>
-#include "tracker/loading.hpp"
+#include <cmath>
 #include "bat/point.hpp"
+#include <locale.h>
+
+using std::max;
 
 struct Node {
   int child[8], num;
@@ -283,9 +286,9 @@ struct Octree {
   }
   void getNeighbors(float&x, float&y, float&z, float&r, Nearest*&nearest, int&len, const int&maxk, float dx, float dy, float dz, float w = 1, int ind = 0) {
     w *= 0.5;
-    float ax = max(fabs(dx-w)-w, 0.0);
-    float ay = max(fabs(dy-w)-w, 0.0);
-    float az = max(fabs(dz-w)-w, 0.0);
+    float ax = max(fabs(dx-w)-w, 0.0f);
+    float ay = max(fabs(dy-w)-w, 0.0f);
+    float az = max(fabs(dz-w)-w, 0.0f);
     if (ax*ax+ay*ay+az*az > r) return;
     //cout << ind << endl;
     if (node[ind].num == -1) {
@@ -339,6 +342,7 @@ struct Octree {
       }
       count += ok;
     }
+    setlocale(LC_ALL, "C");
     fprintf(fp, "ply\n"
 	    "format ascii 1.0\n"
 	    "element vertex %d\n"

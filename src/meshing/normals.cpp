@@ -1,3 +1,4 @@
+#include "tracker/loading.hpp"
 #include <iostream>
 
 static int N_FRAMES = 350;
@@ -12,7 +13,7 @@ extern char* OUTPUT_PLY_FILE;
 
 using namespace std;
 
-#include "../recorder/dataio.hpp"
+#include "recorder/dataio.hpp"
 
 extern const char* VIEW;
 
@@ -147,6 +148,8 @@ int normals_main(int argc, char**argv) {
 
     Octree tree(point, points);
     tree.save(OUTPUT_PLY_FILE);
+
+    return 0;
 
     MyTrackball track(screen);
     //track.speed = 30;

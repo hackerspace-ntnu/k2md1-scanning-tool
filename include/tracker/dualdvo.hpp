@@ -12,10 +12,12 @@ using std::endl;
 #include <iomanip>
 #include <algorithm>
 
-#if defined DEBUG
-#include "/home/johan/hackerspace/hackerspace/mapbot/k2-md1/src/cl/visualizer.hpp"
-#endif
+//#if defined DEBUG
+//#include "/home/johan/hackerspace/hackerspace/mapbot/k2-md1/src/cl/visualizer.hpp"
+//#endif
 
+extern const char* DVO_KERNEL;
+extern const char* DUALDVO_KERNEL;
 
 const int w = 512, h = w;
 const int scales = 5;
@@ -119,8 +121,8 @@ struct SimpleDVO {
 #else
     const char args[] = "-cl-denorms-are-zero -cl-finite-math-only";
 #endif
-    cl::Program program = createProgram("dvo.cl", args);
-    cl::Program dualprogram = createProgram("dualdvo.cl", args);
+    cl::Program program = createProgram(DVO_KERNEL, args);
+    cl::Program dualprogram = createProgram(DUALDVO_KERNEL, args);
     prepare_source = cl::Kernel(program, "PackSource");
     shrink = cl::Kernel(program, "shrink");
     shrinkPacked = cl::Kernel(program, "shrinkPacked");

@@ -1,8 +1,12 @@
 #include <stdio.h>
+#include <exception>
+
+extern const char* ZBUF_SAVE_TEMP;
+extern const char* CBUF_SAVE_TEMP;
 
 static void saveZB(float*z, int w, int h, int num) {
   char name[100];
-  sprintf(name, "../recorded/%03dzb%dx%d.ppm", num, w, h);
+  sprintf(name, ZBUF_SAVE_TEMP, num, w, h);
   FILE*fp = fopen(name, "w");
   fprintf(fp, "P5\n%d %d\n65535\n", w, h);
   for (int j = 0; j < h; j++) {
@@ -17,7 +21,7 @@ static void saveZB(float*z, int w, int h, int num) {
 
 static void loadZB(float*z, int w, int h, int num) {
   char name[100];
-  sprintf(name, "../recorded/%03dzb%dx%d.ppm", num, w, h);
+  sprintf(name, ZBUF_SAVE_TEMP, num, w, h);
   FILE*fp = fopen(name, "r");
   int tmp;
   fscanf(fp, "P5\n%d %d\n%d\n", &w, &h, &tmp);
@@ -32,10 +36,13 @@ static void loadZB(float*z, int w, int h, int num) {
 }
 
 static unsigned char writedata[960*540*3];
+
 static void saveIMG(Surface&I, int w, int h, int num) {
   char name[100];
-  sprintf(name, "../recorded/%03dcol%dx%d.ppm", num, w, h);
-  FILE*fp = fopen(name, "w");
+  sprintf(name, CBUF_SAVE_TEMP, num, w, h);
+  FILE*fp = fopen(name, "w+");
+  if(!fp)
+      throw std::exception();
   fprintf(fp, "P6\n%d %d\n255\n", w, h);
   
   int c = 0;
@@ -56,7 +63,7 @@ static void saveIMG(Surface&I, int w, int h, int num) {
 
 static void loadIMG(unsigned char*I, int w, int h, int num) {
   char name[100];
-  sprintf(name, "../recorded/%03dcol%dx%d.ppm", num, w, h);
+  sprintf(name, CBUF_SAVE_TEMP, num, w, h);
   FILE*fp = fopen(name, "r");
   int tmp;
   fscanf(fp, "P5\n%d %d\n%d\n", &w, &h, &tmp);
@@ -70,7 +77,7 @@ static void loadIMG(unsigned char*I, int w, int h, int num) {
 
 static void loadSurface(Surface&sf, int w, int h, int num) {
   char name[100];
-  sprintf(name, "../recorded/%03dcol%dx%d.ppm", num, sf.w, sf.h);
+  sprintf(name, CBUF_SAVE_TEMP, num, sf.w, sf.h);
   FILE*fp = fopen(name, "r");
   if (!fp) {
     cout << "File not found :" << name << endl;

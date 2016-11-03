@@ -1,3 +1,4 @@
+#include "orientation_info.h"
 #include <iostream>
 
 #include "bat/bat.hpp"
@@ -81,8 +82,10 @@ int points_main(int argc, char**argv) {
 
     float ifx = 1.f/Dpers;
     int points = 0;
-    Point*point = new Point[300000000];
-    int*pstart = new int[N_FRAMES+1];
+    std::vector<Point> point;
+    point.resize(300000000);
+    std::vector<int> pstart;
+    pstart.resize(N_FRAMES+1);
     for (int i = 0; i < N_FRAMES; i++) {
         float dx, dy, dz, dxyz[3];
 
@@ -136,9 +139,14 @@ int points_main(int argc, char**argv) {
     while (1) {
         while (screen.gotEvent()) {
             Event e = screen.getEvent();
-            if (e.type == KeyPress and e.key == K_ESCAPE) return 0;
-            else if (e.type == KeyPress) {
-                if (e.key == K_SPACE) showall ^= 1;
+            if (e.type == KeyPress) {
+                if(e.key == K_ESCAPE)
+                {
+                    o_info.dislikePoints();
+                    return 0;
+                }
+                else if (e.key == K_ENTER) return 0;
+                else if (e.key == K_SPACE) showall ^= 1;
                 else if (e.key == K_TAB) showframe ^= 1;
                 else if (e.key == K_LEFT) frame -= 1;
                 else if (e.key == K_RIGHT) frame += 1;
@@ -148,11 +156,12 @@ int points_main(int argc, char**argv) {
         track.update();
         vec3 side = up^viewdir, pos = track.pos;
 
+        Point* point_p = &point[0];
         if (showframe) {
             frame = (frame%N_FRAMES+N_FRAMES)%N_FRAMES;
-            renderPoints(sf, zbuf, point+pstart[frame], pstart[frame+1]-pstart[frame], pos, side, up, viewdir, pers);
+            renderPoints(sf, zbuf, point_p+pstart[frame], pstart[frame+1]-pstart[frame], pos, side, up, viewdir, pers);
         } else
-            renderPoints(sf, zbuf, point, points, pos, side, up, viewdir, pers);
+            renderPoints(sf, zbuf, point_p, points, pos, side, up, viewdir, pers);
         //for (int i = 0; i < sw*sh; i += 2)
         //	sf.pixels[i] = I[i]*0x10101;
         screen.putSurface(sf);

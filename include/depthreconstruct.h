@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QRunnable>
 
+class ScanTheThing;
+
 class DepthReconstruct : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -15,8 +17,12 @@ class DepthReconstruct : public QObject, public QRunnable
 
     QString m_finalPlyFile;
 
+    bool m_doFinishReconstruct = true;
+
+    ScanTheThing* m_userInterface;
+
 public:
-    explicit DepthReconstruct(QObject *parent = 0);
+    explicit DepthReconstruct(ScanTheThing *interface, QObject *parent = 0);
     void run();
 
     int numImages() const
@@ -33,6 +39,7 @@ signals:
     void finishedDvoSomething();
     void finishedNormals();
     void finishedReconstruction();
+    void finishedPoints();
 
 public slots:
 

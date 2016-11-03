@@ -36,6 +36,7 @@ public:
   ~MyScreen()
   {
       XDestroyWindow(display, win);
+      XCloseDisplay(display);
   }
 
   inline MyScreen(unsigned int, unsigned int);

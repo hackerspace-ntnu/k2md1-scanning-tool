@@ -1,12 +1,37 @@
+#include "orientation_info.h"
 #include "depthreconstruct.h"
 
 #include <QProcess>
 
+#include "scanthething.h"
 #include "meshing.h"
+#include "pointcloud.h"
 #include "tracker.h"
 
-DepthReconstruct::DepthReconstruct(QObject *parent) : QObject(parent)
+DepthReconstruct::DepthReconstruct(ScanTheThing* interface, QObject *parent) : QObject(parent)
 {
+    m_userInterface = interface;
+
+    connect(&o_info, SIGNAL(putLoadingInfo(int,int)),
+            interface, SLOT(setProgress(int,int)));
+
+    connect(&o_info, &Orientation_Info::dislikePoints,
+            [&]()
+    {
+        m_doFinishReconstruct = false;
+    });
+
+    connect(this, &DepthReconstruct::finishedNormals,
+            [&]()
+    {
+        m_userInterface->setProgress(true, 0,0, "Running SSD reconstruction");
+    });
+
+    connect(this, &DepthReconstruct::finishedReconstruction,
+            [&]()
+    {
+        m_userInterface->displayErrorMessage("Finished reconstruction!");
+    });
 }
 
 void DepthReconstruct::run()
@@ -27,22 +52,29 @@ void DepthReconstruct::run()
         finishedDvoSomething();
     }
     {
+        points_main(2, app_args);
+        finishedPoints();
+    }
 
+    if(!m_doFinishReconstruct)
+        return;
+
+    {
         normals_main(2, app_args);
         finishedNormals();
     }
     {
-        QProcessEnvironment curr_env;
+        m_userInterface->setProgress(true, 0,0, "Running SSD reconstruction");
+        QProcessEnvironment curr_env = QProcessEnvironment::systemEnvironment();
         QString appdir = curr_env.value("APPDIR");
-        QProcess ssd_recon;
-        ssd_recon.setProgram(appdir + "/bin/ssd_recon");
-        ssd_recon.setArguments({"-octreeLevels", "9",
-                                "-weights","1","1","5",
-                                "-samplesPerNode","10",
-                                OUTPUT_PLY_FILE,
-                                finalPlyFile()
-                               });
-        ssd_recon.start();
+        qDebug("----------------------");
+        QProcess::execute(appdir + "/bin/ssd_recon", {"-octreeLevels", "9",
+                                                      "-weights","1","1","5",
+                                                      "-samplesPerNode","10",
+                                                      OUTPUT_PLY_FILE,
+                                                      finalPlyFile()
+                                                     });
+        qDebug("----------------------");
         finishedReconstruction();
     }
 }

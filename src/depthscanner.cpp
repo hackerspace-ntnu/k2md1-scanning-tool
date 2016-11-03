@@ -34,6 +34,7 @@ void DepthScanner::run()
 
     try{
         ret = foreground_main();
+        m_userInterface->setNumImages(f_info.images());
     }
     catch ( std::exception e)
     {

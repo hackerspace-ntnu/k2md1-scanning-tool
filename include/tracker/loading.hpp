@@ -1,3 +1,5 @@
+#include "orientation_info.h"
+
 static int loading_next, loading_step;
 static int loading_len = 40;
 
@@ -8,10 +10,15 @@ static void loading_title(const char*title) {
 
 static void loading_bar(int a, int b) {
   if (a != loading_next) return;
+
   if (!loading_next) {
     loading_step = b >= 1000 ? b/1000 : 1;
   }
   loading_next += loading_step;
+
+  o_info.putLoadingInfo(a, b);
+
+  return;
   printf("|");
   int dist = a*2LL*loading_len/b;
   for (int i = 0; i < dist>>1; i++)

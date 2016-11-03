@@ -2,9 +2,9 @@
 
 XWindow m_window;
 
-#include "myregister.hpp"
+#include "recorder/myregister.hpp"
 #include "bat/bat.hpp"
-#include "dataio.hpp"
+#include "recorder/dataio.hpp"
 #include <cmath>
 
 #define REGISTER
@@ -58,7 +58,8 @@ int foreground_main() {
     Surface bg(sw, sh);
     Surface avg(Iw, Ih);
 
-    float*mindepth = new float[sw*sh];
+    std::vector<float> mindepth;
+    mindepth.resize(sw*sh);
     for (int i = 0; i < sw*sh; i++) mindepth[i] = 1e9, avg.pixels[i].a = 0;
     int saved = 0;
     int mode = 1, save = 0, disp = 0;
@@ -81,7 +82,7 @@ int foreground_main() {
         }
 
         /* Use QObject as trigger for events, not keys */
-        if(f_info.calibrated())
+        if(f_info.calibrated() && mode != 2)
         {
             f_info.finishedCalibration();
             mode = 2;
@@ -90,7 +91,10 @@ int foreground_main() {
             save = 1;
         /* Tell host if anything was scanned */
         if(f_info.endScan())
+        {
+            f_info.finishedScanning();
             return save ? 0 : 2;
+        }
 
         kinect.waitForFrame();
         kinect.getColorAndDepth((uint**)&col, &depth);
